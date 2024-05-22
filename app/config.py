@@ -4,7 +4,7 @@ class Settings(BaseSettings):
     app_name: str = "Plant Scraper"
     debug: bool = True
     host: str = "0.0.0.0"
-    port: int = 8000
+    port: int = 8080
 
     class Config:
         env_file = ".env"
