@@ -1,5 +1,6 @@
 from typing import List
 
+import httpx
 import requests
 from fastapi import HTTPException
 from bs4 import BeautifulSoup
@@ -75,11 +76,15 @@ def scrape_detail_new_version(soup) -> PlantDetails:
     )
 
 
-def scrape_detail(plant_name: str) -> PlantDetails:
+async def scrape_detail(plant_name: str) -> PlantDetails:
     url = f"{base_detail_url}/{plant_name}"
-    response = requests.get(url)
-    response.raise_for_status()
-    soup = BeautifulSoup(response.text, 'html.parser')
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+    if soup.find("html") is None:
+        raise ValueError(f"없는 식물입니다 : {plant_name}")
 
     if soup.select_one("#plantDetailV4__page"):
         return scrape_detail_new_version(soup)
@@ -87,29 +92,28 @@ def scrape_detail(plant_name: str) -> PlantDetails:
         return scrape_detail_old_version(soup)
 
 
-def getSearchResultSet(keyword: str) -> SearchPlantList:
+async def getSearchResultSet(keyword: str) -> SearchPlantList:
     url = f"{base_search_url}?keyword={keyword}"
     try:
-        response = requests.get(url)
-        response.raise_for_status()
-        result = response.json()
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url)
+            response.raise_for_status()
+            result = response.json()
 
-        if "data" not in result:
-            raise HTTPException(status_code=404, detail="검색 결과가 없습니다.")
+            if "data" not in result or len(result["data"]) == 0:
+                raise HTTPException(status_code=404, detail="검색 결과가 없습니다.")
 
-        plants = [
-            SearchPlantResult(
-                name=plant["plantname_korean"],
-                thumbnail_url=plant["thumbnail"]
+            plants = [
+                SearchPlantResult(
+                    name=plant["plantname_korean"],
+                    thumbnail_url=plant["thumbnail"]
+                )
+                for plant in result["data"]
+            ]
+
+            return SearchPlantList(
+                results=plants
             )
-            for plant in result["data"]
-        ]
-
-        print(type(plants))
-
-        return SearchPlantList(
-            results=plants
-        )
 
     except requests.RequestException as e:
         raise HTTPException(status_code=400, detail=str(e))

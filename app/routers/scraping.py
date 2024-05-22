@@ -7,11 +7,9 @@ router = APIRouter()
 
 @router.get("/search/{keyword}", response_model=SearchPlantList)
 async def scrape(keyword: str):
-    result_set = scraper.getSearchResultSet(keyword)
-    return result_set
+    return await scraper.getSearchResultSet(keyword)
 
 @router.get("/detail/{plant_name}", response_model=PlantDetails)
 async def scrape_detail(plant_name: str):
-    result = scraper.scrape_detail(plant_name)
-    return result
+    return await scraper.scrape_detail(plant_name)
 
