@@ -1,12 +1,11 @@
 from fastapi import FastAPI, HTTPException
 from app.routers import scraping
 from app.config import settings
-from app.exceptions import value_error_exception_handler, http_exception_handler
+from app.exceptions import http_exception_handler
 
 app = FastAPI()
 
 app.include_router(scraping.router)
-app.add_exception_handler(ValueError, value_error_exception_handler)
 app.add_exception_handler(HTTPException, http_exception_handler)
 
 @app.get("/")
