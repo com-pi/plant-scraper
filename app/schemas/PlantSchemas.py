@@ -12,6 +12,7 @@ class PlantDetails(BaseModel):
     description: str
     scientific_name: str
     info: List[PlantAttribute]
+    image_urls: List[str]
 
 class SearchPlantResult(BaseModel):
     name: str

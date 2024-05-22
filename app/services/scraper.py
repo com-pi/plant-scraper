@@ -31,11 +31,20 @@ def scrape_detail_old_version(soup) -> PlantDetails:
         else:
             scientific_name = info2
 
+    image_source = soup.select(
+        "#plantDetail__page > div.layout__pc > div > section.plantDetail-slide-section > div > div.swiper-wrapper > div > img")
+
+    image_urls = [
+        image_source.attrs["src"]
+        for image_source in image_source
+    ]
+
     return PlantDetails(
         name = name,
         description = description,
         scientific_name = scientific_name,
-        info = info
+        info = info,
+        image_urls = image_urls
     )
 
 def scrape_detail_new_version(soup) -> PlantDetails:
@@ -51,11 +60,18 @@ def scrape_detail_new_version(soup) -> PlantDetails:
         info2 = info_item.select_one(".table-item-desc").text.strip()
         info.append(PlantAttribute(name=col[index], info1=info1, info2=info2))
 
+    image_source = soup.select("#plantDetail__page > div > div > section > div > div > div > div.swiper-wrapper > div > img")
+    image_urls = [
+        image_source.attrs["src"]
+        for image_source in image_source
+    ]
+
     return PlantDetails(
         name = name,
         description = description,
         scientific_name = scientific_name,
-        info = info
+        info = info,
+        image_urls = image_urls
     )
 
 
