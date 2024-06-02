@@ -81,7 +81,7 @@ def scrape_detail_new_version(soup) -> PlantDetails:
     )
 
 
-async def scrape_detail(plant_name: str) -> PlantDetails:
+async def get_detail_info(plant_name: str) -> PlantDetails:
     url = f"{base_detail_url}/{plant_name}"
     async with httpx.AsyncClient() as client:
         response = await client.get(url)
@@ -100,7 +100,7 @@ async def scrape_detail(plant_name: str) -> PlantDetails:
         return scrape_detail_old_version(soup)
 
 
-async def getSearchResultSet(keyword: str) -> SearchPlantList:
+async def get_search_result_set(keyword: str) -> SearchPlantList:
     url = f"{base_search_url}?keyword={keyword}"
     try:
         async with httpx.AsyncClient() as client:
@@ -116,6 +116,7 @@ async def getSearchResultSet(keyword: str) -> SearchPlantList:
 
             plants = [
                 SearchPlantResult(
+                    id=plant["plantname_korean"].split("(")[0].strip(),
                     name=plant["plantname_korean"],
                     thumbnail_url=plant["thumbnail"]
                 )

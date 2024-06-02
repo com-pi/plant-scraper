@@ -7,6 +7,7 @@ class PlantAttribute(BaseModel):
     info1: str
     info2: str
 
+
 class PlantDetails(BaseModel):
     name: str
     description: str
@@ -14,10 +15,12 @@ class PlantDetails(BaseModel):
     info: List[PlantAttribute]
     image_urls: List[str]
 
+
 class SearchPlantResult(BaseModel):
+    id: str
     name: str
     thumbnail_url: str
 
+
 class SearchPlantList(BaseModel):
     results: List[SearchPlantResult]
-

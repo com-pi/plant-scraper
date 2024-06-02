@@ -1,7 +1,8 @@
 from fastapi import FastAPI, HTTPException
-from app.routers import scraping
+
 from app.config import settings
 from app.exceptions import http_exception_handler
+from app.routers import scraping
 
 app = FastAPI()
 
