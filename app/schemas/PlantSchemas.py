@@ -8,10 +8,17 @@ class PlantAttribute(BaseModel):
     info2: str
 
 
+class PlantingCondition(BaseModel):
+    condition: str
+    min: int
+    max: int
+
+
 class PlantDetails(BaseModel):
     name: str
     description: str
     scientific_name: str
+    planting_conditions: List[PlantingCondition]
     info: List[PlantAttribute]
     image_urls: List[str]
 
