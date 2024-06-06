@@ -80,8 +80,15 @@ def scrape_detail_new_version(soup) -> PlantDetails:
         info2 = info_item.select_one(".table-item-desc").text.strip()
         if index == 2:
             match = re.search(r'(\d+)\s*~\s*(\d+)', info1)
-            condition = PlantingCondition(condition="습도", min=match.group(1), max=match.group(2))
-            planting_conditions.append(condition)
+            if match:
+                condition = PlantingCondition(condition="습도", min=match.group(1), max=match.group(2))
+                planting_conditions.append(condition)
+            if match is None:
+                split = info1.split(" ")
+                condition1 = split[0][0:2]
+                condition2 = split[1]
+                condition = PlantingCondition.from_single_condition("습도", condition2, condition1)
+                planting_conditions.append(condition)
         if index == 3:
             match = re.search(r'(\d+)\s*~\s*(\d+)', info2)
             condition = PlantingCondition(condition="온도", min=match.group(1), max=match.group(2))
@@ -138,9 +145,10 @@ async def get_search_result_set(keyword: str) -> SearchPlantList:
                     detail=f"검색 결과가 없습니다 : {keyword}"
                 )
 
+
             plants = [
                 SearchPlantResult(
-                    id=plant["plantname_korean"].split("(")[0].strip(),
+                    id=plant["plantname_korean"].split("(")[0].replace(" ", "-"),
                     name=plant["plantname_korean"],
                     thumbnail_url=plant["thumbnail"]
                 )

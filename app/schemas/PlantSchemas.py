@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import List
 from pydantic import BaseModel
 
 
@@ -12,6 +12,13 @@ class PlantingCondition(BaseModel):
     condition: str
     min: int
     max: int
+
+    @classmethod
+    def from_single_condition(cls, condition: str, inequality: str, num: int) -> 'PlantingCondition':
+        if inequality == "이상":
+            return PlantingCondition(condition=condition, min=num, max=100)
+        if inequality == "이하":
+            return PlantingCondition(condition=condition, min=0, max=num)
 
 
 class PlantDetails(BaseModel):
