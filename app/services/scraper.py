@@ -148,7 +148,7 @@ async def get_search_result_set(keyword: str) -> SearchPlantList:
 
             plants = [
                 SearchPlantResult(
-                    id=plant["plantname_korean"].split("(")[0].replace(" ", "-"),
+                    id=plant["plantname_korean"].split("(")[0].strip().replace(" ", "-"),
                     name=plant["plantname_korean"],
                     thumbnail_url=plant["thumbnail"]
                 )
